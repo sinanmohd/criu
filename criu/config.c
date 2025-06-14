@@ -705,7 +705,7 @@ int parse_options(int argc, char **argv, bool *usage_error, bool *has_exec_cmd, 
 		BOOL_OPT("unprivileged", &opts.unprivileged),
 		BOOL_OPT("ghost-fiemap", &opts.ghost_fiemap),
 		BOOL_OPT(OPT_ALLOW_UPROBES, &opts.allow_uprobes),
-		{ "posix-sem-migration", no_argument, 0, 1101 },
+		BOOL_OPT("posix-sem-migration", &opts.posix_sem_migration),
 		{},
 	};
 

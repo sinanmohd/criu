@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <arpa/inet.h>
 #include "soccr.h"
 
 #ifndef SIOCOUTQNSD
@@ -496,7 +497,17 @@ static int libsoccr_set_sk_data_noq(struct libsoccr_sk *sk, struct libsoccr_sk_d
 		addr_size = sizeof(sk->src_addr->v6);
 
 	if (bind(sk->fd, &sk->src_addr->sa, addr_size)) {
-		logerr("Can't bind inet socket back");
+		char addr_str[INET6_ADDRSTRLEN];
+
+		if (sk->src_addr->sa.sa_family == AF_INET) {
+			inet_ntop(AF_INET, &sk->src_addr->v4.sin_addr, addr_str, sizeof(addr_str));
+		} else if (sk->src_addr->sa.sa_family == AF_INET6) {
+			inet_ntop(AF_INET6, &sk->src_addr->v6.sin6_addr, addr_str, sizeof(addr_str));
+		} else {
+			strncpy(addr_str, "unknown-family", sizeof(addr_str) - 1);
+		}
+
+		logerr("Can't bind inet socket back %s", addr_str);
 		return -1;
 	}
 
